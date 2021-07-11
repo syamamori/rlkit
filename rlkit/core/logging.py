@@ -3,6 +3,7 @@ Based on rllab's logger.
 
 https://github.com/rll/rllab
 """
+from packaging import version
 from enum import Enum
 from contextlib import contextmanager
 import numpy as np
@@ -279,23 +280,33 @@ class Logger(object):
 
     def save_itr_params(self, itr, params):
         if self._snapshot_dir:
+            print(list(params.keys()))
+            params.pop("evaluation/env")
+            params.pop("exploration/env")
+
+            def torch_save(params, file_name):
+                if version.parse(torch.__version__) > version.parse("1.6.0"):
+                    return torch.save(params, file_name, _use_new_zipfile_serialization=False)
+                else:
+                    return torch.save(params, file_name)
+
             if self._snapshot_mode == 'all':
                 file_name = osp.join(self._snapshot_dir, 'itr_%d.pkl' % itr)
-                torch.save(params, file_name)
+                torch_save(params, file_name)
             elif self._snapshot_mode == 'last':
                 # override previous params
                 file_name = osp.join(self._snapshot_dir, 'params.pkl')
-                torch.save(params, file_name)
+                torch_save(params, file_name)
             elif self._snapshot_mode == "gap":
                 if itr % self._snapshot_gap == 0:
                     file_name = osp.join(self._snapshot_dir, 'itr_%d.pkl' % itr)
-                    torch.save(params, file_name)
+                    torch_save(params, file_name)
             elif self._snapshot_mode == "gap_and_last":
                 if itr % self._snapshot_gap == 0:
                     file_name = osp.join(self._snapshot_dir, 'itr_%d.pkl' % itr)
-                    torch.save(params, file_name)
+                    torch_save(params, file_name)
                 file_name = osp.join(self._snapshot_dir, 'params.pkl')
-                torch.save(params, file_name)
+                torch_save(params, file_name)
             elif self._snapshot_mode == 'none':
                 pass
             else:
@@ -303,4 +314,3 @@ class Logger(object):
 
 
 logger = Logger()
-
