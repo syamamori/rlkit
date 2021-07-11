@@ -53,9 +53,11 @@ def _filter_batch(np_batch):
 
 
 def np_to_pytorch_batch(np_batch):
-    return {
-        k: _elem_or_tuple_to_variable(x)
-        for k, x in _filter_batch(np_batch)
-        if x.dtype != np.dtype('O')  # ignore object (e.g. dictionaries)
-    }
+    rtv = {}
+    for k, x in _filter_batch(np_batch):
+        if isinstance(x, torch.Tensor):
+            rtv[k] = x
+        elif x.dtype != np.dtype('O'):  # ignore object (e.g. dictionaries)
+            rtv[k] = _elem_or_tuple_to_variable(x)
+    return rtv 
 
