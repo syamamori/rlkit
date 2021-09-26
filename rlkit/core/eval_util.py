@@ -35,7 +35,7 @@ def get_generic_path_information(paths, stat_prefix=''):
 
     # additional parameter
     for key in ["physics_parameter", "code"]:
-        if key not in paths.keys():
+        if key not in paths[0].keys():
             continue
         value = [path[key] for path in paths]
         if len(value[0].shape) == 1:
