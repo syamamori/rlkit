@@ -33,6 +33,19 @@ def get_generic_path_information(paths, stat_prefix=''):
     statistics['Num Paths'] = len(paths)
     statistics[stat_prefix + 'Average Returns'] = get_average_returns(paths)
 
+    # additional parameter
+    for key in ["physics_parameter", "code"]:
+        if key not in paths.keys():
+            continue
+        value = [path[key] for path in paths]
+        if len(value[0].shape) == 1:
+            actions = np.hstack([path[key] for path in paths])
+        else:
+            actions = np.vstack([path[key] for path in paths])
+        statistics.update(create_stats_ordered_dict(
+            key.capitalize(), actions, stat_prefix=stat_prefix
+        ))
+
     # for info_key in ['env_infos', 'agent_infos']:
     #     if info_key in paths[0]:
     #         all_env_infos = [
