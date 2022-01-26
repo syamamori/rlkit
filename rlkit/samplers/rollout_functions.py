@@ -79,6 +79,7 @@ def rollout(
         max_path_length=np.inf,
         render=False,
         render_kwargs=None,
+        delay_reward_func=None,
 ):
     """
     The following value for the following keys will be a 2D array, with the
@@ -137,10 +138,15 @@ def rollout(
             np.expand_dims(next_o, 0)
         )
     )
+
+    rewards=np.array(rewards).reshape(-1, 1)
+    if delay_reward_func is not None:
+        rewards += delay_reward_func(observations, actions, terminals).reshape(-1, 1)
+
     return dict(
         observations=observations,
         actions=actions,
-        rewards=np.array(rewards).reshape(-1, 1),
+        rewards=rewards,
         next_observations=next_observations,
         terminals=np.array(terminals).reshape(-1, 1),
         agent_infos=agent_infos,
