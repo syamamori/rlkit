@@ -13,6 +13,7 @@ class MdpPathCollector(PathCollector):
             max_num_epoch_paths_saved=None,
             render=False,
             render_kwargs=None,
+            delay_reward_func=None
     ):
         if render_kwargs is None:
             render_kwargs = {}
@@ -43,6 +44,7 @@ class MdpPathCollector(PathCollector):
                 self._env,
                 self._policy,
                 max_path_length=max_path_length_this_loop,
+                delay_reward_func=delay_reward_func,
             )
             path_len = len(path['actions'])
             if (
