@@ -139,8 +139,8 @@ def rollout(
     )
 
     rewards=np.array(rewards).reshape(-1, 1)
-    if hasattr(env.task.delay_reward_func):
-        rewards += env.task.delay_reward_func(observations, actions, terminals).reshape(-1, 1)
+    if hasattr(env, "delay_reward_func"):
+        rewards += env.delay_reward_func(observations, actions, terminals).reshape(-1, 1)
 
     return dict(
         observations=observations,
