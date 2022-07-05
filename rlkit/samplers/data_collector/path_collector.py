@@ -44,7 +44,6 @@ class MdpPathCollector(PathCollector):
                 self._env,
                 self._policy,
                 max_path_length=max_path_length_this_loop,
-                delay_reward_func=delay_reward_func,
             )
             path_len = len(path['actions'])
             if (
