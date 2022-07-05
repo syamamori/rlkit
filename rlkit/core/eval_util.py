@@ -7,8 +7,6 @@ from numbers import Number
 
 import numpy as np
 
-import rlkit.pythonplusplus as ppp
-
 
 def get_generic_path_information(paths, stat_prefix=''):
     """
@@ -39,11 +37,15 @@ def get_generic_path_information(paths, stat_prefix=''):
             continue
         value = [path[key] for path in paths]
         if len(value[0].shape) == 1:
-            actions = np.hstack([path[key] for path in paths])
+            stacked_path = np.hstack([path[key] for path in paths])
         else:
-            actions = np.vstack([path[key] for path in paths])
+            stacked_path = np.vstack([path[key] for path in paths])
+
+        # code size == 0 cannot create stats dict
+        if key == "code" and stacked_path.size == 0:
+            continue
         statistics.update(create_stats_ordered_dict(
-            key.capitalize(), actions, stat_prefix=stat_prefix
+            key.capitalize(), stacked_path, stat_prefix=stat_prefix
         ))
 
     # for info_key in ['env_infos', 'agent_infos']:
@@ -113,8 +115,9 @@ def create_stats_ordered_dict(
         else:
             data = np.concatenate(data)
 
-    if (isinstance(data, np.ndarray) and data.size == 1
-            and not always_show_all_stats):
+    if isinstance(data, np.ndarray) \
+       and data.size == 1 \
+       and not always_show_all_stats:
         return OrderedDict({name: float(data)})
 
     stats = OrderedDict([
