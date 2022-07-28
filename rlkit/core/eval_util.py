@@ -28,6 +28,16 @@ def get_generic_path_information(paths, stat_prefix=''):
     statistics.update(create_stats_ordered_dict(
         'Actions', actions, stat_prefix=stat_prefix
     ))
+
+    observations = [path["observations"] for path in paths]
+    if len(observations[0].shape) == 1:
+        observations = np.hstack(observations)
+    else:
+        observations = np.vstack(observations)
+    statistics.update(create_stats_ordered_dict(
+        'Observations', observations, stat_prefix=stat_prefix
+    ))
+
     statistics['Num Paths'] = len(paths)
     statistics[stat_prefix + 'Average Returns'] = get_average_returns(paths)
 
