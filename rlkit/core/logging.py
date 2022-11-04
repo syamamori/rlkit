@@ -286,7 +286,7 @@ class Logger(object):
 
             def torch_save(params, file_name):
                 if version.parse(torch.__version__) > version.parse("1.6.0"):
-                    return torch.save(params, file_name, _use_new_zipfile_serialization=False)
+                    return torch.save(params, file_name, _use_new_zipfile_serialization=True)
                 else:
                     return torch.save(params, file_name)
 
