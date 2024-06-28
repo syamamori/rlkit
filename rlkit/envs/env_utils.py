@@ -1,5 +1,7 @@
 import os
+import numpy as np
 
+import gymnasium
 from gym.spaces import Box, Discrete, Tuple
 
 ENV_ASSET_DIR = os.path.join(os.path.dirname(__file__), 'assets')
@@ -18,6 +20,8 @@ def get_dim(space):
         return sum(get_dim(subspace) for subspace in space.spaces)
     elif hasattr(space, 'flat_dim'):
         return space.flat_dim
+    elif isinstance(space, gymnasium.spaces.space.Space):
+        return np.prod(space.shape)
     else:
         raise TypeError("Unknown space: {}".format(space))
 

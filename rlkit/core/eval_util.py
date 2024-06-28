@@ -55,7 +55,7 @@ def get_generic_path_information(paths, stat_prefix=''):
         if key == "code" and stacked_path.size == 0:
             continue
         statistics.update(create_stats_ordered_dict(
-            key.capitalize(), stacked_path, stat_prefix=stat_prefix
+                key.capitalize(), stacked_path, stat_prefix=stat_prefix
         ))
 
     # for info_key in ['env_infos', 'agent_infos']:
