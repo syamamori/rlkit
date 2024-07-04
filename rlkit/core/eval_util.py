@@ -11,6 +11,12 @@ import numpy as np
 def get_generic_path_information(paths, stat_prefix=''):
     """
     Get an OrderedDict with a bunch of statistic names and values.
+    paths:  
+    [
+        [
+            [] num. of steps
+        ] num. of collect episode
+    ] num. of rollout paths
     """
     statistics = OrderedDict()
     returns = [sum(path["rewards"]) for path in paths]
@@ -40,6 +46,15 @@ def get_generic_path_information(paths, stat_prefix=''):
 
     statistics['Num Paths'] = len(paths)
     statistics[stat_prefix + 'Average Returns'] = get_average_returns(paths)
+
+    if paths[0]['env_infos'][0].get('success') is not None:
+        num_done = np.array([np.sum(path["terminals"]) for path in paths])
+        num_done[num_done == 0] = 1.0  # prevent divide by zero
+        success = np.array([np.sum([x["success"] for x in path["env_infos"]]) for path in paths])
+        success = success / num_done  # average over number of episode
+        statistics.update(create_stats_ordered_dict(
+            'SuccessRate', success, stat_prefix=stat_prefix
+        ))
 
     # additional parameter
     for key in ["physics_parameter", "code"]:
