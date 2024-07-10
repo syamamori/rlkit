@@ -44,12 +44,21 @@ def _elem_or_tuple_to_variable(elem_or_tuple):
     return ptu.from_numpy(elem_or_tuple).float()
 
 
-def _filter_batch(np_batch):
-    for k, v in np_batch.items():
-        if v.dtype == np.bool:
-            yield k, v.astype(int)
-        else:
-            yield k, v
+if np.__version__ > "1.23.1":
+    def _filter_batch(np_batch):
+        for k, v in np_batch.items():
+            if v.dtype == np.bool_:
+                yield k, v.astype(int)
+            else:
+                yield k, v
+else:
+    def _filter_batch(np_batch):
+        for k, v in np_batch.items():
+            if v.dtype == np.bool:
+                yield k, v.astype(int)
+            else:
+                yield k, v
+
 
 
 def np_to_pytorch_batch(np_batch):
